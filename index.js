@@ -1,8 +1,10 @@
-console.log("🟢 بدء تشغيل البوت...");
+console.log("🟢 بدء تشغيل البوت bot00...");
 
 const mineflayer = require('mineflayer');
 
 function createBot() {
+  console.log("🔁 إنشاء البوت bot00...");
+
   const bot = mineflayer.createBot({
     host: 'arabix.aternos.me',
     username: 'bot00', // ✅ اسم البوت بعد التعديل
@@ -45,6 +47,7 @@ function createBot() {
   bot.once('spawn', () => {
     console.log("✅ البوت دخل السيرفر وجاهز ✅");
 
+    // حركة مستمرة للأمام والخلف
     setInterval(() => {
       bot.setControlState('forward', movingForward);
       bot.setControlState('back', !movingForward);
@@ -57,6 +60,7 @@ function createBot() {
     }, 500);
   });
 
+  // رسالة تعليمية كل 10 دقائق
   setInterval(() => {
     bot.chat('📢 استخدم /help لعرض أوامر البوت والتفاعل معه! 🚀');
   }, 10 * 60 * 1000);
@@ -94,6 +98,7 @@ function createBot() {
       }
     }
 
+    // أمر /unmute
     if (msg.startsWith('/unmute')) {
       const parts = msg.split(' ');
       const target = parts[1];
@@ -107,6 +112,7 @@ function createBot() {
       return;
     }
 
+    // أمر /help
     if (msg === '/help') {
       bot.chat(`📜 أوامر البوت:
   /help - عرض هذه القائمة
@@ -117,12 +123,14 @@ function createBot() {
       return;
     }
 
+    // أمر /معلوماتي
     if (msg === '/معلوماتي') {
       const warns = warnings[username] || 0;
       bot.chat(`📛 @${username} عدد تحذيراتك: ${warns}/3`);
       return;
     }
 
+    // دخول AFK
     if (msg === 'afk') {
       if (!afkPlayers.has(username)) {
         afkPlayers.add(username);
@@ -131,6 +139,7 @@ function createBot() {
       return;
     }
 
+    // خروج من AFK
     if (afkPlayers.has(username)) {
       afkPlayers.delete(username);
       bot.chat(`💡 @${username} لم يعد AFK`);
