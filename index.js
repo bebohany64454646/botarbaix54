@@ -7,7 +7,7 @@ function createBot() {
 
   const bot = mineflayer.createBot({
     host: 'arabix.aternos.me',
-    username: 'bot00', // ✅ اسم البوت بعد التعديل
+    username: 'bot00',
     auth: 'offline',
     version: false
   });
@@ -98,7 +98,6 @@ function createBot() {
       }
     }
 
-    // أمر /unmute
     if (msg.startsWith('/unmute')) {
       const parts = msg.split(' ');
       const target = parts[1];
@@ -112,7 +111,6 @@ function createBot() {
       return;
     }
 
-    // أمر /help
     if (msg === '/help') {
       bot.chat(`📜 أوامر البوت:
   /help - عرض هذه القائمة
@@ -123,14 +121,13 @@ function createBot() {
       return;
     }
 
-    // أمر /معلوماتي
     if (msg === '/معلوماتي') {
       const warns = warnings[username] || 0;
       bot.chat(`📛 @${username} عدد تحذيراتك: ${warns}/3`);
       return;
     }
 
-    // دخول AFK
+    // AFK
     if (msg === 'afk') {
       if (!afkPlayers.has(username)) {
         afkPlayers.add(username);
@@ -139,7 +136,6 @@ function createBot() {
       return;
     }
 
-    // خروج من AFK
     if (afkPlayers.has(username)) {
       afkPlayers.delete(username);
       bot.chat(`💡 @${username} لم يعد AFK`);
