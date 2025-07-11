@@ -1,6 +1,7 @@
 {
   "name": "bot00",
   "version": "1.0.0",
+  "description": "Mineflayer bot",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
