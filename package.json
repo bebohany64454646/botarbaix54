@@ -1,0 +1,11 @@
+{
+  "name": "arabix0bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "mineflayer": "^4.6.1"
+  }
+}
