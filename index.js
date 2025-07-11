@@ -1,3 +1,5 @@
+console.log("🟢 بدء تشغيل البوت...");
+
 const mineflayer = require('mineflayer');
 
 function createBot() {
@@ -10,9 +12,9 @@ function createBot() {
 
   const swears = [
     'احا', 'يلعن', 'كلب', 'غبي', 'fuck', 'shit', 'bitch', 'damn',
-    'حمار', 'وسخ', 'زفت', 'منيك', 'انيك', 'قذر', 'شرموط', 'كس',
-    'كسمك', 'ابن الكلب', 'حيوان', 'nigga', 'bastard', 'crap',
-    'سافل', 'تفوو', 'شرموطة', 'وسخان', 'ابن الوسخة', 'whore'
+    'حمار', 'وسخ', 'زفت', 'منيك', 'انيك', 'قذر', 'شرموط',
+    'كس', 'كسمك', 'ابن الكلب', 'حيوان', 'nigga', 'bastard',
+    'crap', 'whore', 'تفوو', 'ابن الوسخة', 'سافل', 'شرموطة', 'وسخان'
   ];
 
   const greetings = {
@@ -40,18 +42,13 @@ function createBot() {
   let moveTicks = 0;
   const moveLimit = 5;
 
-  // حركة مستمرة
   bot.once('spawn', () => {
-    console.log('✅ البوت دخل السيرفر وجاهز');
+    console.log("✅ البوت دخل السيرفر وجاهز ✅");
 
+    // حركة مستمرة
     setInterval(() => {
-      if (movingForward) {
-        bot.setControlState('forward', true);
-        bot.setControlState('back', false);
-      } else {
-        bot.setControlState('forward', false);
-        bot.setControlState('back', true);
-      }
+      bot.setControlState('forward', movingForward);
+      bot.setControlState('back', !movingForward);
 
       moveTicks++;
       if (moveTicks >= moveLimit) {
@@ -66,22 +63,21 @@ function createBot() {
     bot.chat('📢 استخدم /help لعرض أوامر البوت والتفاعل معه! 🚀');
   }, 10 * 60 * 1000);
 
-  // ترحيب عند دخول لاعب
   bot.on('playerJoined', (player) => {
     if (player.username !== bot.username) {
       bot.chat(`🎉 أهلًا وسهلًا @${player.username}! نتمنى لك وقتًا ممتعًا في سيرفرنا 💎`);
     }
   });
 
-  // التعامل مع الشات
   bot.on('chat', (username, message) => {
     if (username === bot.username) return;
+
     const msg = message.toLowerCase();
 
-    // ميوت = تجاهل
+    // ممنوع يتكلم لو ميوت
     if (muted.has(username)) return;
 
-    // الشتائم
+    // فلترة شتائم
     if (swears.some(word => msg.includes(word))) {
       warnings[username] = (warnings[username] || 0) + 1;
 
@@ -95,7 +91,7 @@ function createBot() {
       return;
     }
 
-    // تحيات وردود تلقائية
+    // رد تلقائي على التحيات
     for (const key in greetings) {
       if (msg.includes(key)) {
         bot.chat(`💬 @${username} ${greetings[key]}`);
@@ -103,7 +99,7 @@ function createBot() {
       }
     }
 
-    // أمر فك الميوت
+    // أمر /unmute
     if (msg.startsWith('/unmute')) {
       const parts = msg.split(' ');
       const target = parts[1];
@@ -117,25 +113,25 @@ function createBot() {
       return;
     }
 
-    // أمر معلومات اللاعب
+    // أمر /help
+    if (msg === '/help') {
+      bot.chat(`📜 أوامر البوت:
+  /help - عرض هذه القائمة
+  /unmute [اسم] - فك كتم لاعب
+  /معلوماتي - عدد تحذيراتك
+  تحيات مثل: hi, هاي، gg، سلام...
+  ممنوع الشتائم تمامًا`);
+      return;
+    }
+
+    // أمر /معلوماتي
     if (msg === '/معلوماتي') {
       const warns = warnings[username] || 0;
       bot.chat(`📛 @${username} عدد تحذيراتك: ${warns}/3`);
       return;
     }
 
-    // أمر help
-    if (msg === '/help') {
-      bot.chat(`📜 أوامر البوت:
-  /help - عرض هذه القائمة
-  /unmute [اسم] - فك كتم لاعب
-  /معلوماتي - عدد تحذيراتك
-  تحيات مثل: hi, hey, gg, هاي...
-  ممنوع الشتايم نهائيًا`);
-      return;
-    }
-
-    // نظام AFK
+    // وضع AFK
     if (msg === 'afk') {
       if (!afkPlayers.has(username)) {
         afkPlayers.add(username);
@@ -144,20 +140,20 @@ function createBot() {
       return;
     }
 
+    // إزالة AFK إذا تكلم
     if (afkPlayers.has(username)) {
       afkPlayers.delete(username);
       bot.chat(`💡 @${username} لم يعد AFK`);
     }
   });
 
-  // إعادة الاتصال عند الطرد
-  bot.on('end', () => {
-    console.log('❌ تم طرد البوت، سيحاول الدخول خلال 5 ثوانٍ...');
-    setTimeout(createBot, 5000);
+  bot.on('error', err => {
+    console.log("💥 خطأ:", err.message);
   });
 
-  bot.on('error', err => {
-    console.log('⚠️ خطأ:', err.message);
+  bot.on('end', () => {
+    console.log("🔁 تم فصل البوت.. إعادة المحاولة بعد 5 ثوانٍ");
+    setTimeout(createBot, 5000);
   });
 }
 
