@@ -5,7 +5,7 @@ const mineflayer = require('mineflayer');
 function createBot() {
   const bot = mineflayer.createBot({
     host: 'arabix.aternos.me',
-    username: 'ArabixBot123',
+    username: 'bot00', // ✅ اسم البوت بعد التعديل
     auth: 'offline',
     version: false
   });
@@ -45,7 +45,6 @@ function createBot() {
   bot.once('spawn', () => {
     console.log("✅ البوت دخل السيرفر وجاهز ✅");
 
-    // حركة مستمرة
     setInterval(() => {
       bot.setControlState('forward', movingForward);
       bot.setControlState('back', !movingForward);
@@ -58,7 +57,6 @@ function createBot() {
     }, 500);
   });
 
-  // رسالة تعليمية كل 10 دقائق
   setInterval(() => {
     bot.chat('📢 استخدم /help لعرض أوامر البوت والتفاعل معه! 🚀');
   }, 10 * 60 * 1000);
@@ -74,10 +72,8 @@ function createBot() {
 
     const msg = message.toLowerCase();
 
-    // ممنوع يتكلم لو ميوت
     if (muted.has(username)) return;
 
-    // فلترة شتائم
     if (swears.some(word => msg.includes(word))) {
       warnings[username] = (warnings[username] || 0) + 1;
 
@@ -91,7 +87,6 @@ function createBot() {
       return;
     }
 
-    // رد تلقائي على التحيات
     for (const key in greetings) {
       if (msg.includes(key)) {
         bot.chat(`💬 @${username} ${greetings[key]}`);
@@ -99,7 +94,6 @@ function createBot() {
       }
     }
 
-    // أمر /unmute
     if (msg.startsWith('/unmute')) {
       const parts = msg.split(' ');
       const target = parts[1];
@@ -113,7 +107,6 @@ function createBot() {
       return;
     }
 
-    // أمر /help
     if (msg === '/help') {
       bot.chat(`📜 أوامر البوت:
   /help - عرض هذه القائمة
@@ -124,14 +117,12 @@ function createBot() {
       return;
     }
 
-    // أمر /معلوماتي
     if (msg === '/معلوماتي') {
       const warns = warnings[username] || 0;
       bot.chat(`📛 @${username} عدد تحذيراتك: ${warns}/3`);
       return;
     }
 
-    // وضع AFK
     if (msg === 'afk') {
       if (!afkPlayers.has(username)) {
         afkPlayers.add(username);
@@ -140,7 +131,6 @@ function createBot() {
       return;
     }
 
-    // إزالة AFK إذا تكلم
     if (afkPlayers.has(username)) {
       afkPlayers.delete(username);
       bot.chat(`💡 @${username} لم يعد AFK`);
